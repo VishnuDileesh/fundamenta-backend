@@ -1,0 +1,144 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum UserRole {
+  founder
+  investor
+  admin
+}
+
+enum InvestorApprovalStatus {
+  pending
+  approved
+  rejected
+}
+
+enum BusinessStage {
+  idea
+  mvp
+  launched
+  scaling
+}
+
+enum BusinessApprovalStatus {
+  pending
+  approved
+  rejected
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      UserRole
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  founderProfile  FounderProfile?
+  investorProfile InvestorProfile?
+  adminProfile    AdminProfile?
+}
+
+model FounderProfile {
+  id         String    @id @default(uuid())
+  userId     String    @unique
+  fullName   String
+  bio        String
+  approvedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  user         User           @relation(fields: [userId], references: [id])
+  businessIdea BusinessIdea[]
+}
+
+model InvestorProfile {
+  id              String                 @id @default(uuid())
+  userId          String                 @unique
+  fullName        String
+  bio             String
+  investmentFocus String
+  minInvestment   Float
+  maxInvestment   Float
+  approvalStatus  InvestorApprovalStatus @default(pending)
+  approvedAt      DateTime?
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+
+  user              User               @relation(fields: [userId], references: [id])
+  investorInterests InvestorInterest[]
+}
+
+model AdminProfile {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  fullName  String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model BusinessIdea {
+  id                   String                 @id @default(uuid())
+  founderProfileId     String
+  title                String
+  summary              String
+  industry             String
+  stage                BusinessStage          @default(idea)
+  problemStatement     String
+  solution             String
+  targetMarket         String
+  businessModel        String
+  competitiveAdvantage String?
+  fundingSought        Float
+  fundingUse           String
+  approvalStatus       BusinessApprovalStatus @default(pending)
+  approvedAt           DateTime?
+  submittedAt          DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+
+  founderProfile    FounderProfile     @relation(fields: [founderProfileId], references: [id])
+  aiAnalysis        AIAnalysis?
+  investorInterests InvestorInterest[]
+}
+
+model AIAnalysis {
+  id                      String   @id @default(uuid())
+  businessIdeaId          String   @unique
+  marketPotentialScore    Float?
+  innovationScore         Float?
+  feasibilityScore        Float?
+  financialViabilityScore Float?
+  overallScore            Float?
+  strengthsArray          Json?
+  weaknessesArray         Json?
+  opportunitiesArray      Json?
+  risksArray              Json?
+  marketSizeData          Json?
+  competitorAnalysis      Json?
+  recommendation          String?
+  generatedAt             DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  businessIdea BusinessIdea @relation(fields: [businessIdeaId], references: [id])
+}
+
+model InvestorInterest {
+  id                String   @id @default(uuid())
+  investorProfileId String
+  businessIdeaId    String
+  bookmarkedAt      DateTime @default(now())
+
+  investorProfile InvestorProfile @relation(fields: [investorProfileId], references: [id])
+  businessIdea    BusinessIdea    @relation(fields: [businessIdeaId], references: [id])
+
+  @@unique([investorProfileId, businessIdeaId])
+}
