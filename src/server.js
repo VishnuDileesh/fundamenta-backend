@@ -3,6 +3,7 @@ import morgan from "morgan";
 import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
 import ideasRouter from "./routes/ideas.routes.js";
+import interestRouter from "./routes/interests.routes.js";
 
 export const createServer = () => {
   const app = express();
@@ -20,6 +21,7 @@ export const createServer = () => {
   app.use("/api/v1/auth", authRouter);
   app.use("/api/v1/users", userRouter);
   app.use("/api/v1/ideas", ideasRouter);
+  app.use("/api/v1/interests", interestRouter);
 
   return app;
 };
