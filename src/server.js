@@ -1,5 +1,7 @@
 import express from "express";
 import morgan from "morgan";
+import helmet from "helmet";
+import compression from "compression";
 import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
 import ideasRouter from "./routes/ideas.routes.js";
@@ -8,7 +10,12 @@ import interestRouter from "./routes/interests.routes.js";
 export const createServer = () => {
   const app = express();
 
-  app.disable("x-powered-by").use(morgan("dev")).use(express.json());
+  app
+    .disable("x-powered-by")
+    .use(morgan("dev"))
+    .use(helmet())
+    .use(compression())
+    .use(express.json());
 
   app.get("/health-check", (req, res) => {
     res.status(200).json({
