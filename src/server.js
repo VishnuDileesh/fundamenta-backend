@@ -1,6 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 import authRouter from "./routes/auth.routes.js";
+import userRouter from "./routes/user.routes.js";
 
 export const createServer = () => {
   const app = express();
@@ -16,6 +17,7 @@ export const createServer = () => {
   });
 
   app.use("/api/v1/auth", authRouter);
+  app.use("/api/v1/users", userRouter);
 
   return app;
 };
