@@ -45,6 +45,15 @@ ideasRouter.post("/", authGuard, roleGuard(["founder"]), async (req, res) => {
       },
     });
 
+    fetch(
+      "https://console.cloud.google.com/run/detail/asia-south1/fundamenta-backend-image/revisions?project=fundamenta-backend/analyze",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ businessIdeaId: idea.id }),
+      },
+    ).catch((err) => console.error("AI analysis failed:", err));
+
     res.status(201).json(idea);
   } catch (err) {
     console.error(err);
