@@ -46,7 +46,7 @@ ideasRouter.post("/", authGuard, roleGuard(["founder"]), async (req, res) => {
     });
 
     fetch(
-      "https://console.cloud.google.com/run/detail/asia-south1/fundamenta-backend-image/revisions?project=fundamenta-backend/analyze",
+      "https://fundamenta-ai-server-image-753825386925.asia-south1.run.app/analyze",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
