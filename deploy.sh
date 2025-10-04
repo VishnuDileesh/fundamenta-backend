@@ -32,14 +32,5 @@ docker tag $IMAGE_NAME $FULL_IMAGE_PATH
 echo "🚀 Pushing image to Artifact Registry..."
 docker push $FULL_IMAGE_PATH
 
-# ============================
-# Deploy to Cloud Run
-# ============================
-echo "☁️ Deploying to Cloud Run..."
-gcloud run deploy $IMAGE_NAME \
-  --image $FULL_IMAGE_PATH \
-  --platform managed \
-  --region $REGION \
-  --allow-unauthenticated
 
 echo "✅ Deployment complete!"

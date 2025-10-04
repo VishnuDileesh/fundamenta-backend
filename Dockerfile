@@ -15,6 +15,9 @@ RUN npm ci --omit=dev
 # Copy all source files
 COPY . .
 
+# RUN npx prisma generate
+
+
 # -------------------------------
 # Stage 2: Production Image
 # -------------------------------
