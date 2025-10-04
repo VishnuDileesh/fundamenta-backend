@@ -156,16 +156,42 @@ userRouter.patch(
   async (req, res) => {
     try {
       const { id } = req.params;
-      const { status } = approveUserSchema.parse(req.body);
+      // const { status } = approveUserSchema.parse(req.body);
 
       const updatedFounder = await prisma.founderProfile.update({
         where: { id },
         data: {
-          approvedAt: status === "approved" ? new Date() : null,
+          approvedAt: new Date(),
+          approvalStatus: "approved",
         },
       });
 
-      res.json({ ...updatedFounder, approvalStatus: status });
+      res.json({ ...updatedFounder, approvalStatus: "approved" });
+    } catch (err) {
+      console.error(err);
+      res.status(400).json({ error: err.message });
+    }
+  },
+);
+
+userRouter.patch(
+  "/founders/:id/reject",
+  authGuard,
+  roleGuard(["admin"]),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      // const { status } = approveUserSchema.parse(req.body);
+
+      const updatedFounder = await prisma.founderProfile.update({
+        where: { id },
+        data: {
+          rejectedAt: new Date(),
+          approvalStatus: "rejected",
+        },
+      });
+
+      res.json({ ...updatedFounder, approvalStatus: "rejected" });
     } catch (err) {
       console.error(err);
       res.status(400).json({ error: err.message });
@@ -180,13 +206,36 @@ userRouter.patch(
   async (req, res) => {
     try {
       const { id } = req.params;
-      const { status } = approveUserSchema.parse(req.body);
 
       const updatedInvestor = await prisma.investorProfile.update({
         where: { id },
         data: {
-          approvalStatus: status,
-          approvedAt: status === "approved" ? new Date() : null,
+          approvalStatus: "approved",
+          approvedAt: new Date(),
+        },
+      });
+
+      res.json(updatedInvestor);
+    } catch (err) {
+      console.error(err);
+      res.status(400).json({ error: err.message });
+    }
+  },
+);
+
+userRouter.patch(
+  "/investors/:id/reject",
+  authGuard,
+  roleGuard(["admin"]),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const updatedInvestor = await prisma.investorProfile.update({
+        where: { id },
+        data: {
+          approvalStatus: "rejected",
+          approvedAt: null,
         },
       });
 

@@ -162,4 +162,29 @@ ideasRouter.patch(
   },
 );
 
+ideasRouter.patch(
+  "/:id/reject",
+  authGuard,
+  roleGuard(["admin"]),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      // const { status } = approveIdeaSchema.parse(req.body);
+
+      const idea = await prisma.businessIdea.update({
+        where: { id },
+        data: {
+          approvalStatus: "rejected",
+          approvedAt: new Date(),
+        },
+      });
+
+      res.json(idea);
+    } catch (err) {
+      console.error(err);
+      res.status(400).json({ error: err.message });
+    }
+  },
+);
+
 export default ideasRouter;
